@@ -690,9 +690,9 @@ io.sockets.on('connection', function (appSocket) {
                         }
                         reprapWaitForPos = false;
 
-                    } else if (data.indexOf('Grbl') === 0) { // Check if it's Grbl
+                    } else if (/^(Grbl|SimpleLaser) \d/.test(data)) { // Check if it's Grbl (incl. rebadged banners like Longer's 'SimpleLaser' on MKS DLC32)
                         firmware = 'grbl';
-                        fVersion = data.substr(5, 4); // get version
+                        fVersion = data.split(' ')[1]; // get version (banner: '<name> <version> [...]')
                         fDate = '';
                         writeLog('GRBL detected (' + fVersion + ')', 1);
                         io.sockets.emit('firmware', {firmware: firmware, version: fVersion, date: fDate});
@@ -1275,9 +1275,9 @@ io.sockets.on('connection', function (appSocket) {
                                 io.sockets.emit('mPos', {x: mxpos, y: mypos, z: mzpos, a: mapos});
                                 setMpgMPos({x: mxpos, y: mypos, z: mzpos, a: mapos});
                             }
-                        } else if (data.indexOf('Grbl') === 0) { // Check if it's Grbl
+                        } else if (/^(Grbl|SimpleLaser) \d/.test(data)) { // Check if it's Grbl (incl. rebadged banners like Longer's 'SimpleLaser' on MKS DLC32)
                             firmware = 'grbl';
-                            fVersion = data.substr(5, 4); // get version
+                            fVersion = data.split(' ')[1]; // get version (banner: '<name> <version> [...]')
                             fDate = '';
                             writeLog('GRBL detected (' + fVersion + ')', 1);
                             io.sockets.emit('firmware', {firmware: firmware, version: fVersion, date: fDate});
@@ -1677,9 +1677,9 @@ io.sockets.on('connection', function (appSocket) {
                                 setMpgWPos({x: xPos, y: yPos, z: zPos, a: aPos});
                                 //writeLog('wPos: X:' + xPos + ' Y:' + yPos + ' Z:' + zPos + ' E:' + aPos, 3);
                                 reprapWaitForPos = false;
-                            } else if (data.indexOf('Grbl') === 0) { // Check if it's Grbl
+                            } else if (/^(Grbl|SimpleLaser) \d/.test(data)) { // Check if it's Grbl (incl. rebadged banners like Longer's 'SimpleLaser' on MKS DLC32)
                                 firmware = 'grbl';
-                                fVersion = data.substr(5, 4); // get version
+                                fVersion = data.split(' ')[1]; // get version (banner: '<name> <version> [...]')
                                 fDate = '';
                                 writeLog('GRBL detected (' + fVersion + ')', 1);
                                 io.sockets.emit('firmware', {firmware: firmware, version: fVersion, date: fDate});
