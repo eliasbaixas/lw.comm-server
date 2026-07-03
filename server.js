@@ -141,7 +141,16 @@ var app = http.createServer(function (req, res) {
     } else {
         webServer.serve(req, res, function (err, result) {
             if (err) {
+                // SPA fallback: pretty frontend routes (/files, /control, ...)
+                // are client-side; serve index.html for extensionless GETs.
+                var pathname = url.parse(req.url).pathname;
+                if (err.status === 404 && req.method === 'GET' && !path.extname(pathname)) {
+                    webServer.serveFile('/index.html', 200, {}, req, res);
+                    return;
+                }
                 console.error(chalk.red('ERROR:'), chalk.yellow(' webServer error:' + req.url + ' : '), err.message);
+                res.writeHead(err.status || 500, { 'Content-Type': 'text/plain' });
+                res.end(err.message);
             }
         });
     }
