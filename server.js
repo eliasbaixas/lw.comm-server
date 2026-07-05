@@ -2684,7 +2684,7 @@ function home(data) {
                 break;
             default:
                 //not supported
-                appSocket.emit('error', 'Command not supported by firmware!');
+                io.sockets.emit('error', 'Command not supported by firmware!'); // appSocket is out of scope here (module-level fn); referencing it crashed the server
                 break;
             }
             break;
@@ -2704,7 +2704,7 @@ function home(data) {
                 break;
             default:
                 //not supported
-                appSocket.emit('error', 'Command not supported by firmware!');
+                io.sockets.emit('error', 'Command not supported by firmware!'); // appSocket is out of scope here (module-level fn); referencing it crashed the server
                 break;
             }
             break;
@@ -2724,7 +2724,7 @@ function home(data) {
                 break;
             default:
                 //not supported
-                appSocket.emit('error', 'Command not supported by firmware!');
+                io.sockets.emit('error', 'Command not supported by firmware!'); // appSocket is out of scope here (module-level fn); referencing it crashed the server
                 break;
             }
             break;
@@ -2743,7 +2743,7 @@ function home(data) {
                 break;
             default:
                 //not supported
-                appSocket.emit('error', 'Command not supported by firmware!');
+                io.sockets.emit('error', 'Command not supported by firmware!'); // appSocket is out of scope here (module-level fn); referencing it crashed the server
                 break;
             }
             break;
@@ -2766,7 +2766,7 @@ function home(data) {
                 break;
             default:
                 //not supported
-                appSocket.emit('error', 'Command not supported by firmware!');
+                io.sockets.emit('error', 'Command not supported by firmware!'); // appSocket is out of scope here (module-level fn); referencing it crashed the server
                 break;
             }
             break;
@@ -2789,7 +2789,7 @@ function home(data) {
                 break;
             default:
                 //not supported
-                appSocket.emit('error', 'Command not supported by firmware!');
+                io.sockets.emit('error', 'Command not supported by firmware!'); // appSocket is out of scope here (module-level fn); referencing it crashed the server
                 break;
             }
             break;
@@ -2833,7 +2833,7 @@ function probe(data) {
             break;
         default:
             //not supported
-            appSocket.emit('error', 'Command not supported by firmware!');
+            io.sockets.emit('error', 'Command not supported by firmware!'); // appSocket is out of scope here (module-level fn); referencing it crashed the server
             break;
         }
         send1Q();
