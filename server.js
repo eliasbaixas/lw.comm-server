@@ -71,6 +71,7 @@ var startTime;
 var queueLen;
 var queuePos = 0;
 var queuePointer = 0;
+var lastSerialResponse = 0; // watchdog: last time the machine sent anything
 var readyToSend = true;
 var jobRequestIP;
 
@@ -451,6 +452,7 @@ io.sockets.on('connection', function (appSocket) {
                     writeLog(chalk.yellow('INFO: ') + 'Connected to ' + port.path + ' at ' + port.settings.baudRate, 1);
                     isConnected = true;
                     connectedTo = port.path;
+                    lastSerialResponse = Date.now();
 
                     // Start interval for qCount messages to socket clients
 //                        queueCounter = setInterval(function () {
@@ -480,6 +482,7 @@ io.sockets.on('connection', function (appSocket) {
 
                 parser.on('data', function (data) {
                     //data = data.toString().trimStart();
+                    lastSerialResponse = Date.now();
                     writeLog('Recv: ' + data, 3);
                     if (data.indexOf('ok') === 0) { // Got an OK so we are clear to send
                         if (firmware === 'grbl') {
@@ -708,6 +711,17 @@ io.sockets.on('connection', function (appSocket) {
                         // Start intervall for status queries
                         statusLoop = setInterval(function () {
                             if (isConnected) {
+                                // Watchdog: GRBL answers every '?', so prolonged
+                                // silence means the machine is gone (powered off,
+                                // hung MCU) even though the USB port stays open.
+                                // Close it so clients see the truth instead of a
+                                // 'connected' machine that ignores everything.
+                                if (lastSerialResponse && Date.now() - lastSerialResponse > 5000) {
+                                    writeLog(chalk.red('Machine stopped responding (5s of silence) — closing port'), 1);
+                                    io.sockets.emit('error', 'Machine stopped responding — check power and cable, then reconnect');
+                                    if (port && port.isOpen) port.close();
+                                    return;
+                                }
                                 machineSend('?');
                                 //writeLog('Sent: ?', 2);
                             }
